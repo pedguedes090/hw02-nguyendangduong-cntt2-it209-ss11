@@ -1,0 +1,36 @@
+name: Java Spring Boot CI and Artifact
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  test-and-package:
+    name: Test and Package JAR
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v5
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Make Gradle Wrapper executable
+        run: chmod +x gradlew
+
+      - name: Run JUnit tests
+        run: ./gradlew test
+
+      - name: Build executable JAR
+        run: ./gradlew bootJar
+
+      - name: Upload application artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-jar
+          path: build/libs/*.jar
+
